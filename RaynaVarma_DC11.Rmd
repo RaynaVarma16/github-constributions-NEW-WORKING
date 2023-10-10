@@ -30,7 +30,8 @@ Note that the `echo = FALSE` parameter was added to the code chunk to prevent pr
 
 #__________________________________________________________________________
 
-11.2
+11.2 -> Consider these two tables containing demographic and geographic information about countries.
+Answer: the two tables cannot be successfully combined because the countries are grouped different for each table. For example, in the first table, the country is under the country variable. However, in the second table, the country is under the name variable
 
 
 
