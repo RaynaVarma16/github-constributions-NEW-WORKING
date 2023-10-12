@@ -86,34 +86,52 @@ ggplot(data = High65, aes(x = Latitude, y = Longitude)) + geom_point()  + aes(co
 11.5 -> Using the ZipGeography data table (from dcData), answer the following questions. In addition to the answer itself, show the statement that you used and the data table created by your statement that contains the answer.
 
 11.5.1 -> How many different counties are there?
-Answer: 1,910
+Answer: 1910
 
 ```{r}
 counties <-
   ZipGeography %>%
-  group_by(County)%>%
-  summarise(count = n())
+  select(County)%>%
+  summarise(count = n_distinct(County))
 
 
 ```
 
 
 11.5.2 -> Which city names are used in the most states?
-Answer: Salem
+Answer: Washington
 
 ```{r}
-ZipGeography <-
-  ZipGeography %>%
-  select(State, CityName, )
+StateFreqByCity <-
+  distinct(ZipGeography) %>%
+  select(CityName, State) %>%
+  summarise(distinct(State))
+  count = (CityName %in% c((State))) %>%
+  mutate(numStates = count)
 
 
 ```
 
 
 11.5.3 -> Identify cities that include more than 5% of their state population; which of those city names are used in the most states?
-Answer:
+Answer: Salem
 
 ```{r}
+StatePop <-
+  ZipGeography %>%
+  select(State, Population) %>%
+  mutate(totalPopu = sum(Population, na.rm = TRUE))
+
+TopCity <-
+  ZipGeography %>%
+  select(Population, CityName) %>%
+  mutate(cityPop = sum(Population, na.rm = TRUE))
+
+TopCity2 <-
+  TopCity %>%
+  inner_join(StatePop) %>%
+  filter(cityPop > 0.05*Population)
+  
 
 
 ```
@@ -121,9 +139,14 @@ Answer:
 
 
 11.5.4 -> Does any state have more than one time zone?
-Answer:
+Answer: Yes, Florida, Oregon, Kentucky, Arizona, Texas, Tennessee, North Dakota, Michigan, Alaska, South Dakota, Nevada, Kansas, Nebraska, Idaho, and Indiana
 
 ```{r}
+TimeZone2 <-
+  ZipGeography %>%
+  select(State, Timezone) %>%
+  mutate(count = sum(Timezone %in% c(State)))
+
 
 
 ```
