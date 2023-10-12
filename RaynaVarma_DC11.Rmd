@@ -49,11 +49,16 @@ gf_point(Latitude ~ Longitude, data = Crowded) %>%
 
 ii.
 ```{r}
-Over65 <-
+ZipsOver65 <-
   ZipDemography %>%
-  select(X65yearsandover) %>%
-  left_join(ZipGeography %>% select(State),
-             by = c("ZIP" = "ZIP code"))
+  select(X65yearsandover, ZIP, Totalpopulation) %>%
+  mutate(totalPop = sum(Totalpopulation, na.rm = TRUE))
+  
+Over65 <-
+  ZipsOver65 %>%
+  select(ZIP, Totalpopulation) %>%
+  inner_join(ZipGeography) %>%
+  select(ZIP, State, Totalpopulation)
 
 ```
 
@@ -62,10 +67,20 @@ Over65 <-
 ```{r}
 HighZIP <-
   ZipGeography %>%
-  group_by(ZIP, Population) %>%
-  summarise(count = sum(Population)) %>%
-  head(10,000)
+  select(ZIP, Population, Latitude, Longitude) %>%
+  arrange(desc(Population)) %>%
+  head(10000)
 
+HighZIP65 <-
+  ZipDemography %>%
+  select(X65yearsandover, ZIP)
+
+High65 <-
+  HighZIP %>%
+  inner_join(HighZIP65) %>%
+  mutate(Over65 = X65yearsandover/sum(Population))
+
+ggplot(data = High65, aes(x = Latitude, y = Longitude)) + geom_point()  + aes(colour = X65yearsandover) + theme(legend.position = "right") + labs(title = "")
 ```
 
 11.5 -> Using the ZipGeography data table (from dcData), answer the following questions. In addition to the answer itself, show the statement that you used and the data table created by your statement that contains the answer.
